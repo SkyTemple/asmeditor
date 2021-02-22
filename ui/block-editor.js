@@ -74,9 +74,8 @@ class BlockEditor extends LitElement {
     super.connectedCallback();
     this.codeModel.onNodeAdded.addListener(this._nodeAdded.bind(this));
     this.codeModel.onNodeRemoved.addListener(this._nodeRemoved.bind(this));
-
-    // Add the meta node
-    this.nodes.push(this.codeModel.head);
+    
+    this._recreateNodeList();
   }
 
   async disconnectedCallback() {

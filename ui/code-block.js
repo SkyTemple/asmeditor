@@ -15,6 +15,7 @@ class CodeBlock extends LitElement {
     return {
       node: { type: Object },
       index: { type: Number },
+      validationErrors: { type: Array },
     };
   }
 
@@ -43,6 +44,11 @@ class CodeBlock extends LitElement {
   border-top-right-radius: 8px;
   margin: 0;
   cursor: grab;
+  transition: background-color 200ms linear;
+}
+
+.head[invalid] {
+  background-color: red;
 }
 
 .content {
@@ -68,11 +74,19 @@ class CodeBlock extends LitElement {
   gap: 8px;
 }
 
-.input {
+.input .fields {
   display: flex;
   flex-direction: row;
   gap: 12px;
   align-items: center;
+}
+
+.input .errors {
+  margin: 0;
+  padding: 0;
+  line-height: 1.5rem;
+  font-size: 0.8rem;
+  color: red;
 }
 
 .input .input-name {
@@ -97,19 +111,42 @@ class CodeBlock extends LitElement {
     this.node = {};
     this.index = 0;
     this.codeModel = getCodeModel();
+    this.validationErrors = [];
   }
 
   connectedCallback() {
     super.connectedCallback();
+    this.node.onValidated.addListener(this._nodeValidated.bind(this));
+
+    this.codeModel.validateNode(this.node);
   }
 
   disconnectedCallback() {
     super.disconnectedCallback();
+    this.node.onValidated.removeAllListeners();
+  }
+
+  updated(changedProperties) {
+    super.updated(changedProperties);
+    if (changedProperties.has('node')) {
+      this.node.onValidated.removeAllListeners();
+      this.node.onValidated.addListener(this._nodeValidated.bind(this));
+      this.codeModel.validateNode(this.node);
+    }
   }
 
   _inputChange(evt, input) {
     input.value = evt.detail;
     this.codeModel.notifyNodeUpdated(this.node);
+  }
+
+  _nodeValidated(errors) {
+    this.validationErrors = errors;
+    if (errors.length > 0) {
+      this.classList.add('error');
+    } else {
+      this.classList.remove('error');
+    }
   }
 
   _dragStart(ev) {
@@ -125,6 +162,10 @@ class CodeBlock extends LitElement {
     this.codeModel.removeNode(this.node);
   }
 
+  get _isValid() {
+    return this.validationErrors.length === 0;
+  }
+
   get _isMeta() {
     return this.node.type === 'meta';
   }
@@ -132,10 +173,15 @@ class CodeBlock extends LitElement {
   _renderInput(input) {
     return html`
 <div class="input">
-  <p class="input-name">${input.name}</p>
-  <generic-input .value=${input.value.constantValue} .type=${input.type} .annotation=${input.annotation}
-    @inputChange="${evt => this._inputChange(evt, input)}">
-  </generic-input>
+  <div class="fields">
+    <p class="input-name">${input.name}</p>
+    <generic-input .value=${input.value.constantValue} .kind=${input.value.kind} .type=${input.type} .annotation=${input.annotation}
+      @inputChange="${evt => this._inputChange(evt, input)}">
+    </generic-input>
+  </div>
+  <ul class="errors">
+    ${this.validationErrors.filter(err => err.input === input).map(err => err.text)}
+  </ul>
 </div>
     `;
   }
@@ -162,7 +208,7 @@ class CodeBlock extends LitElement {
     }
 
     return html`
-<div class="head" draggable="true" @dragstart="${this._dragStart}">
+<div class="head" ?invalid=${!this._isValid} draggable="true" @dragstart="${this._dragStart}">
   <h3>${this.node.name}</h3>
   ${!this._isMeta
     ? html`<mwc-icon-button icon="delete" @click="${this._remove}"></mwc-icon-button>`
@@ -170,8 +216,9 @@ class CodeBlock extends LitElement {
 </div>
 <div class="content">
   <p class="description">${this.node.data.description}</p>
-  <h3>Inputs</h3>
-  <div class="inputs">${inputs}</div>
+  ${inputs ?
+    html`<h3>Inputs</h3><div class="inputs">${inputs}</div>`
+    : ''}
   ${outputs
     ? html`<h3>Outputs</h3><div class="outputs">${outputs}</div>`
     : ''}

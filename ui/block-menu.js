@@ -39,7 +39,6 @@ class BlockMenu extends LitElement {
   }
   
   render() {
-    console.log(this.nodeType);
     return html`
 <mwc-menu>
 ${this.nodeTypes.map(item => html`

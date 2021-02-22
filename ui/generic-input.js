@@ -41,14 +41,15 @@ class GenericInput extends LitElement {
 
   connectedCallback() {
     super.connectedCallback();
-    this.kind = this.allowedKinds[0];
+    this.kind = this.kind ?? this.allowedKinds[0];
+    this.value = this.value ?? 0;
   }
 
   _dispatchChangeEvent() {
     this.dispatchEvent(new CustomEvent('inputChange', {
       detail: {
         kind: this.kind,
-        constantValue: this.kind === 'constant' ? this.value : undefined
+        constantValue: this.value
       }
     }));
   }
@@ -64,8 +65,8 @@ class GenericInput extends LitElement {
   }
   
   render() {
-    let options = this.allowedKinds.map((kind, index) => html`
-      <mwc-list-item selected="${index === 0}" @change=${this._kindChanged} value="${kind}">
+    let options = this.allowedKinds.map(kind => html`
+      <mwc-list-item ?selected="${kind === this.kind}" @change=${this._kindChanged} value="${kind}">
         ${KIND_DESCRIPTIONS[kind]}
       </mwc-list-item>
     `);
