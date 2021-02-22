@@ -12,7 +12,7 @@
   },
   "scripts": {
     "serve": "web-dev-server --node-resolve --watch --open",
-    "build": "esbuild index.js --bundle --outfile=dist/bundle.js && cp index-prod.html dist/index.html && cp styles.css dist/styles.css"
+    "build": "esbuild index.js --bundle --minify --outfile=dist/index.js && cp index-dist.html dist/index.html && cp styles.css dist/styles.css && mkdir -p dist/vendor && cp -r node_modules/codemirror dist/vendor/ && cp -r data dist"
   },
   "dependencies": {
     "@material/mwc-button": "^0.20.0",
