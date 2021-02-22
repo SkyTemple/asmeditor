@@ -1,0 +1,85 @@
+/* Styles for app-root are defined here since we can't use Shadow DOM there */
+body {
+  margin: 0;
+  font-family: 'Roboto', sans-serif;
+}
+
+app-root {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  display: flex;
+}
+
+.loading-container {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.side {
+  color: #eee;
+  border-left: 1px solid #aaa;
+  display: flex;
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  flex-direction: column;
+}
+
+.header {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px;
+  background-color: #f7f7f7;
+  border-top: 1px solid #dddddd;
+  border-bottom: 1px solid #dddddd;
+  min-height: 40px;
+}
+
+.header h2 {
+  color: black;
+  font-size: 1.2rem;
+  margin: 0;
+}
+
+.header-options {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.header-options .buttons {
+  display: flex;
+}
+
+.header-options .buttons > * {
+  margin-left: 4px;
+}
+
+.settings mwc-select {
+  margin: 12px 8px 0 8px;
+  width: calc(100% - 16px);
+}
+
+.settings > * {
+  width: 100%;
+}
+
+.CodeMirror {
+  position: relative;
+  width: 500px;
+  height: 100%;
+}
+
+block-editor {
+  width: calc(100% - 500px - 64px);
+  max-width: 800px;
+}

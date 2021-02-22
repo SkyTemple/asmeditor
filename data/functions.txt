@@ -1,0 +1,7 @@
+// dunlib
+DamageDealt: int = DealDamage(User: user, Target: target, MoveData: moveData, DamageMultiplier: int|multiplier = 0x100, Unk: int)
+
+Success: bool = RandomChanceUT(User: user, Target: target, Chance: int|percentage)
+CanInflict: bool = Cringe(User: user, Target: target, FailMessage: bool, OnlyCheck: bool)
+
+Cringe(User: user, Target: target, FailMessage: bool, OnlyCheck: bool)
