@@ -60,6 +60,11 @@ class CodeBlock extends LitElement {
   font-weight: 500;
 }
 
+.documentation {
+  font-size: 0.9rem;
+  color: #888;
+}
+
 .content h3 {
   font-size: 1rem;
 }
@@ -179,6 +184,7 @@ class CodeBlock extends LitElement {
       @inputChange="${evt => this._inputChange(evt, input)}">
     </generic-input>
   </div>
+  <p class="documentation">${input.documentation}</p>
   <ul class="errors">
     ${this.validationErrors.filter(err => err.input === input).map(err => err.text)}
   </ul>
@@ -191,6 +197,7 @@ class CodeBlock extends LitElement {
 <div class="output">
   <span class="output-name">${output.name}</span>
   <span class="output-type">(${output.type})</span>
+  <p class="documentation">${output.documentation}</p>
 </div>
     `;
   }
@@ -216,6 +223,7 @@ class CodeBlock extends LitElement {
 </div>
 <div class="content">
   <p class="description">${this.node.data.description}</p>
+  <p class="documentation">${this.node.data.documentation}</p>
   ${inputs ?
     html`<h3>Inputs</h3><div class="inputs">${inputs}</div>`
     : ''}
