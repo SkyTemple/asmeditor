@@ -35,7 +35,7 @@ class AppRoot extends LitElement {
           architecture: 'ARM',
         }
       });
-      this.codeEditor.setValue(this.codeModel.generateCode());
+      this._generateCode();
     });
 
     this.codeModel.onChanged.addListener(this._generateCode.bind(this));
@@ -92,8 +92,9 @@ class AppRoot extends LitElement {
 `;
     }
     return html`
-<block-editor></block-editor>
+<block-editor .subgraph=${this.codeModel}></block-editor>
 <div class="side">
+
   <div class="header">
     <h2>Settings</h2>
   </div>
@@ -106,6 +107,7 @@ class AppRoot extends LitElement {
       <mwc-checkbox @change="${this._r10ReturnChanged}"></mwc-checkbox>
     </mwc-formfield>
   </div>
+
   <div class="header">
     <h2>Output</h2>
     <div class="header-options">
@@ -117,6 +119,15 @@ class AppRoot extends LitElement {
     </div>
   </div>
   <textarea id="code"></textarea>
+
+  <div class="footer">
+    <a href="https://github.com/tech-ticks/eos-effect-editor" rel="noreferrer noopener"
+      target="_blank">GitHub</a>
+    <span class="seperator"></span>
+    <a href="https://github.com/tech-ticks/eos-effect-editor/issues/new" rel="noreferrer noopener"
+      target="_blank">Report issue</a>
+  </div>
+
 </div>
 `;
   }

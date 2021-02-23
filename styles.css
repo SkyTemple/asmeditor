@@ -31,15 +31,18 @@ app-root {
   flex-direction: column;
 }
 
-.header {
+.header, .footer {
   display: flex;
   flex-direction: row;
   align-items: center;
-  justify-content: space-between;
   padding: 8px;
   background-color: #f7f7f7;
   border-top: 1px solid #dddddd;
   border-bottom: 1px solid #dddddd;
+}
+
+.header {
+  justify-content: space-between;
   min-height: 40px;
 }
 
@@ -64,6 +67,24 @@ app-root {
   margin-left: 4px;
 }
 
+.footer {
+  justify-content: center;
+  align-items: center;
+  min-height: 16px;
+  font-size: 0.8rem;
+}
+
+.footer a {
+  color: #555;
+}
+
+.footer .seperator {
+  display: inline-block;
+  height: 12px;
+  margin: 0 10px;
+  border-left: 1px solid #dddddd;
+}
+
 .settings mwc-select {
   margin: 12px 8px 0 8px;
   width: calc(100% - 16px);
@@ -80,6 +101,7 @@ app-root {
 }
 
 block-editor {
-  width: calc(100% - 500px - 64px);
-  max-width: 800px;
+  width: calc(100% - 500px - 32px);
+  padding: 16px;
+  max-width: 900px;
 }

@@ -10,6 +10,7 @@ class BlockEditor extends LitElement {
     return {
       nodes: { type: Array },
       dragOverNodeIndex: { type: Number },
+      subgraph: { type: Object },
     };
   }
 
@@ -18,9 +19,7 @@ class BlockEditor extends LitElement {
 :host {
   display: block;
   position: relative;
-  width: 100%;
   height: 100%;
-  padding: 16px 32px;
   display: flex;
   gap: 12px;
   flex-direction: column;
@@ -86,7 +85,7 @@ class BlockEditor extends LitElement {
 
   _recreateNodeList() {
     let nodes = [];
-    let current = this.codeModel.head;
+    let current = this.subgraph.head;
     nodes.push(current);
     while (current = current.next) {
       nodes.push(current);
@@ -119,13 +118,27 @@ class BlockEditor extends LitElement {
 
   _drop(ev) {
     ev.preventDefault();
+    
+    if (ev.dropHandled) {
+      this.dragOverNodeIndex = undefined;
+      return;
+    }
+
+    ev.dropHandled = true;
+
     let sourceNodeIndex = parseInt(ev.dataTransfer.getData('index'));
-    let sourceNode = this.nodes[sourceNodeIndex];
+    let sourceSubgraphIndex = parseInt(ev.dataTransfer.getData('subgraphIndex'));
+
+    let subgraphIndex = this.codeModel.findSubgraphIndex(this.nodes[0].subgraph);
+    let sourceNode = sourceSubgraphIndex === subgraphIndex
+      ? this.nodes[sourceNodeIndex]
+      : this._findSourceNodeFromOtherSubgraph(sourceNodeIndex, sourceSubgraphIndex);
     
     let targetNode = this.nodes[this.dragOverNodeIndex];
     if (!targetNode) {
       return;
     }
+
     this.dragOverNodeIndex = undefined;
 
     if (sourceNode === targetNode) {
@@ -136,6 +149,18 @@ class BlockEditor extends LitElement {
     this.codeModel.insertExistingNodeAfter(sourceNode, targetNode);
     
     this._recreateNodeList();
+  }
+
+  _findSourceNodeFromOtherSubgraph(nodeIndex, subgraphIndex) {
+    let subgraph = this.codeModel.getSubgraphByIndex(subgraphIndex);
+
+    let i = 0;
+    let current = subgraph.head;
+    while (i < nodeIndex) {
+      current = current.next;
+      i++;
+    }
+    return current;
   }
   
   render() {
@@ -152,7 +177,7 @@ ${this.nodes.map((node, index) => html`
 </div>
 <div class="button-with-menu">
   <mwc-button outlined icon="add" @click="${this._showMenu}"></mwc-button>
-  <block-menu></block-menu>
+  <block-menu .subgraph=${this.subgraph}></block-menu>
 </div>
 `;
   }

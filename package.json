@@ -11,7 +11,7 @@
     "typescript": "^4.1.5"
   },
   "scripts": {
-    "serve": "web-dev-server --node-resolve --watch --open",
+    "start": "web-dev-server --node-resolve --watch --open",
     "build": "esbuild index.js --bundle --minify --outfile=dist/index.js && cp index-dist.html dist/index.html && cp styles.css dist/styles.css && mkdir -p dist/vendor && cp -r node_modules/codemirror dist/vendor/ && cp -r data dist"
   },
   "dependencies": {

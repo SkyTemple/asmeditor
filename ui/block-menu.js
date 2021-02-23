@@ -6,6 +6,12 @@ import { getNodeTypeName, NODE_MAP } from '../lib/code-model';
 const EXCLUDED_NODE_TYPES = ['meta', 'call'];
 
 class BlockMenu extends LitElement {
+  static get properties() {
+    return {
+      subgraph: { type: Object },
+    };
+  }
+
   static get styles() {
     return css`
 :host {
@@ -31,11 +37,11 @@ class BlockMenu extends LitElement {
   }
 
   _addNode(evt) {
-    this.codeModel.addNode(evt.target.value);
+    this.codeModel.addNode(evt.target.value, {}, this.subgraph);
   }
 
   _addCallNode(evt) {
-    this.codeModel.addCallNode(evt.target.value);
+    this.codeModel.addCallNode(evt.target.value, this.subgraph);
   }
   
   render() {
