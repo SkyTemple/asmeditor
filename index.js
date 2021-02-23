@@ -313,11 +313,11 @@
 
 .include "lib/stdlib_${e}.asm"
 .include "lib/dunlib_${e}.asm"
-.definelabel MoveStartAddress, 0x${Xr[e]}
-.definelabel MoveJumpAddress, 0x${mo[e]}
+.definelabel MoveStartAddress, 0x${Xr[e].toString(16)}
+.definelabel MoveJumpAddress, 0x${mo[e].toString(16)}
 
 ; File creation
-.create "./code_out.bin", 0x${Xr[e]}
+.create "./code_out.bin", 0x${Xr[e].toString(16)}
   .org MoveStartAddress
   .area MaxSize ; Define the size of the area
     sub r13, r13, #0x${r.stackReserveSize.toString(16)}  
