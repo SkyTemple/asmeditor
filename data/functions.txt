@@ -1,8 +1,102 @@
+// --------------------------------------------------------
+// stdlib
+// --------------------------------------------------------
+
+// Math
+
+// TODO: add second return value (Remainder: int)
+Quotient: int = EuclidianDivision(Dividend: int, Divisor: int)
+
+// --------------------------------------------------------
 // dunlib
-DamageDealt: int = DealDamage(User: user, Target: target, MoveData: moveData, DamageMultiplier: int|multiplier = 0x100, Unk: int)
+// --------------------------------------------------------
+
+// Experience
+
+AddExp(User: user, Target: target, ExpGain: int)
+
+// Damage
+
+/// @Damage Damage amount. 9999 damage is considered calamitous.
 ConstDamage(Target: target, Damage: int, UnkArg2: int, UnkArg3: int, MoveId: int, UnkArg5: int, UnkArg6: int, MessageType: int, UnkArg8: int, UnkArg9: int)
 
-Success: bool = RandomChanceUT(User: user, Target: target, Chance: int|percentage)
-CanInflict: bool = Cringe(User: user, Target: target, FailMessage: bool, OnlyCheck: bool)
+// Complex effects
 
-Cringe(User: user, Target: target, FailMessage: bool, OnlyCheck: bool)
+DamageWithRecoil(User: user, Target: target, MoveData: moveData, UnkArg3: int)
+
+/// @DamageMultiplier 0x100 is the normal multiplier
+DamageDealt: int = DealDamage(User: user, Target: target, MoveData: moveData, DamageMultiplier: int|multiplier = 0x100, UnkArg4: int)
+
+
+// Heal
+
+HealAllMovesPP(User: user, Target: target, PPHeal: int, NoMessage: bool)
+
+Success: bool = RaiseHP(User: user, Target: target, HPHeal: int, MaxHpRaise: int, FailMessage: bool)
+
+// Status effects
+
+/// Don't use this, use Sleep instead.
+SleepSingle(Target: target, NbTurns: int)
+
+Sleep(User: user, Target: target, NbTurns: int, FailMessage: bool)
+Nightmare(User: user, Target: target, NbTurns: int)
+Rest(User: user, Target: target, NbTurns: int)
+Yawn(User: user, Target: target, NbTurns: int)
+Sleepless(User: user, Target: target, NbTurns: int)
+HasEffect: bool = CheckAdditionalEffect(Target: target, EffectID: int)
+CanInflict: bool = Pause(User: user, Target: target, UnkArg2: int, NbTurns: int, FailMessage: bool, OnlyCheck: bool)
+CanInflict: bool = Infatuate(User: user, Target: target, FailMessage: bool, OnlyCheck: bool)
+CanInflict: bool = Burn(User: user, Target: target, SpecialEffect: int, FailMessage: bool, OnlyCheck: bool)
+AllTeamBurn()
+CanInflict: bool = Poison(User: user, Target: target, FailMessage: bool, OnlyCheck: bool)
+CanInflict: bool = BadPoison(User: user, Target: target, FailMessage: bool, OnlyCheck: bool)
+Freeze(User: user, Target: target, FailMessage: bool)
+Constrict(User: user, Target: target, UnkArg2: int, FailMessage: bool)
+Immobilize(User: user, Target: target, FailMessage: bool)
+Root(User: user, Target: target)
+Wrap(User: user, Target: target)
+Petrify(User: user, Target: target)
+CanInflict: bool = Cringe(User: user, Target: target, FailMessage: bool, OnlyCheck: bool)
+CanInflict: bool = Paralyse(User: user, Target: target, FailMessage: bool, OnlyCheck: bool)
+CanInflict: bool = Confuse(User: user, Target: target, FailMessage: bool, OnlyCheck: bool)
+CanInflict: bool = Fear(User: user, Target: target, FailMessage: bool, OnlyCheck: bool)
+/// Inflicts Poison status to the User, not the Target
+CanInflict: bool = SelfPoison(User: user, Target: target, FailMessage: bool, OnlyCheck: bool)
+DestinyBond(User: user, Target: target)
+SealMove(User: user, Target: target, FailMessage: bool)
+
+/// @StatType 0 = Normal, 1 = Special
+AttackStatUp(User: user, Target: target, StatType: int, NbStages: int, UnkArg4: int, UnkArg5: int)
+/// @StatType 0 = Normal, 1 = Special
+AttackStatDown(User: user, Target: target, StatType: int, NbStages: int, UnkArg4: int, UnkArg5: int)
+/// @StatType 0 = Normal, 1 = Special
+AttackStatMinMax(User: user, Target: target, StatType: int, StatChange: int, UnkArg4: int)
+/// @StatType 0 = Normal, 1 = Special
+DefenseStatMinMax(User: user, Target: target, StatType: int, StatChange: int, UnkArg4: int)
+/// @StatType 0 = Normal, 1 = Special
+DefenseStatUp(User: user, Target: target, StatType: int, NbStages: int, UnkArg4: int, UnkArg5: int)
+/// @StatType 0 = Normal, 1 = Special
+DefenseStatDown(User: user, Target: target, StatType: int, NbStages: int, UnkArg4: int, UnkArg5: int)
+/// @StatType 0 = Accuracy, 1 = Evasiveness
+FocusStatUp(User: user, Target: target, StatType: int)
+/// @StatType 0 = Accuracy, 1 = Evasiveness
+FocusStatDown(User: user, Target: target, StatType: int)
+ResetFocusStat(User: user, Target: target, StatType: int, UnkArg3: int)
+SpeedStatUp(User: user, Target: target, NbStages: int, NbTurns: int, FailMessage: bool)
+SpeedStatDown(User: user, Target: target, NbStages: int, NbTurns: int, FailMessage: bool)
+SpeedStatUpOneStage(User: user, Target: target, NbStages: int, NbTurns: int, FailMessage: bool)
+/// Randomly increases or decreases speed by one stage (50/50).
+RandomSpeedUpDown(User: user, Target: target)
+
+// Random Utils
+
+/// Random chance with user and target
+/// @Success True of the chance passes, false if it doesn't pass or the User or Target fainted.
+/// @Chance Percentage between 0 and 100
+Success: bool = RandomChanceUT(User: user, Target: target, Chance: int|percentage)
+
+/// Random change with user
+/// @Success True of the chance passes, false if it doesn't pass or the User fainted.
+/// @Chance Percentage between 0 and 100
+Success: bool = RandomChanceU(User: user, Chance: int|percentage)
