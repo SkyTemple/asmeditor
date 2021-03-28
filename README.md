@@ -11,14 +11,14 @@ Currently only supports editing moves, item support will be added soon.
 * Function calls
 * Branches
 * Input validation
+* User-defined variables
+* Item support
+* Saving and loading the graph to/from JSON
+* Support for string literals and functions that accept strings
 
 ### Planned
 
-* User-defined variables
 * Reading values from global structs
-* Support for string literals and functions that accept strings
-* Item support
-* Saving and loading the graph to/from JSON
 * Reading values from User, Target and MoveData
 
 ## Developer setup
