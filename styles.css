@@ -29,6 +29,7 @@ app-root {
   right: 0;
   bottom: 0;
   flex-direction: column;
+  width: 500px;
 }
 
 .header, .footer {
@@ -86,12 +87,28 @@ app-root {
 }
 
 .settings mwc-select {
-  margin: 12px 8px 0 8px;
   width: calc(100% - 16px);
+  margin: 12px 8px 0 8px;
 }
 
-.settings > * {
-  width: 100%;
+.variables {
+  padding: 12px;
+  height: 440px;
+  overflow: scroll;
+}
+
+.variables generic-input {
+  margin-bottom: 8px;
+}
+
+.variables .variable {
+  display: flex;
+  gap: 8px;
+  width: 480px;
+}
+
+.variables .name-text {
+  width: 160px;
 }
 
 .CodeMirror {

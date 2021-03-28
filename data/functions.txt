@@ -22,11 +22,10 @@ ConstDamage(Target: target, Damage: int, UnkArg2: int, UnkArg3: int, MoveId: int
 
 // Complex effects
 
-DamageWithRecoil(User: user, Target: target, MoveData: moveData, UnkArg3: int)
+DamageWithRecoil(User: user, Target: target, MoveData: moveData, ItemId: int)
 
 /// @DamageMultiplier 0x100 is the normal multiplier
-DamageDealt: int = DealDamage(User: user, Target: target, MoveData: moveData, DamageMultiplier: int|multiplier = 0x100, UnkArg4: int)
-
+DamageDealt: int = DealDamage(User: user, Target: target, MoveData: moveData, DamageMultiplier: int|multiplier = 0x100, ItemId: int)
 
 // Heal
 
@@ -35,6 +34,10 @@ HealAllMovesPP(User: user, Target: target, PPHeal: int, NoMessage: bool)
 Success: bool = RaiseHP(User: user, Target: target, HPHeal: int, MaxHpRaise: int, FailMessage: bool)
 
 // Status effects
+
+/// Gets the current weather for the selected target.
+/// Applies target's effects that neutralize weather conditions.
+WeatherID: int = GetWeather(Target: target)
 
 /// Don't use this, use Sleep instead.
 SleepSingle(Target: target, NbTurns: int)
@@ -100,3 +103,21 @@ Success: bool = RandomChanceUT(User: user, Target: target, Chance: int|percentag
 /// @Success True of the chance passes, false if it doesn't pass or the User fainted.
 /// @Chance Percentage between 0 and 100
 Success: bool = RandomChanceU(User: user, Chance: int|percentage)
+
+// Messages
+
+/// Replaces the string at StringID with the string representation of the Target (aka its name)
+/// Any message with the string manipulator "[string:StringID]" will use that string
+/// @UnkArg2 seems to always be 0
+ChangeString(StringID: int, Target: target, UnkArg2: int)
+
+/// Sends a message to the dungeon console (the one that appears in the lower part of the screen) and in the message log.
+/// @User The User is used to determine if the message is in the same turn as the previous one, in order to separate them with a horizontal bar.
+/// @Log If set to 0, the message will only appear in the message log
+SendMessageWithString(User: user, String: string, Log: bool)
+
+/// Sends a message to the dungeon console (the one that appears in the lower part of the screen) and in the message log.
+/// Uses a string defined in the ".str" file at index MessageID.
+/// @User The User is used to determine if the message is in the same turn as the previous one, in order to separate them with a horizontal bar.
+/// @Log If set to 0, the message will only appear in the message log
+SendMessageWithID(User: user, MessageID: int, Log: bool)
