@@ -9,7 +9,7 @@ import '@material/mwc-select';
 
 import './generic-input';
 
-const SUPPORTED_TYPES = ['int', 'bool'];
+const SUPPORTED_TYPES = ['int', 'bool', 'string'];
 
 class CodeBlock extends LitElement {
   static get properties() {

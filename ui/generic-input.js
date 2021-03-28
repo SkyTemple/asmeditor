@@ -71,7 +71,7 @@ class GenericInput extends LitElement {
   }
 
   _valueChanged(evt) {
-    this.value = +evt.target.value || Number(evt.target.checked);
+    this.value = evt.target.value || Number(evt.target.checked);
     this._dispatchChangeEvent();
   }
 
@@ -124,6 +124,7 @@ class GenericInput extends LitElement {
     if (this.kind === 'constant') {
       switch (this.type) {
         case 'int':
+        case 'string':
           valueField = html`<mwc-textfield outlined label="Value" @change=${this._valueChanged} value="${this.value}">
             </mwc-textfield>`;
           break;
