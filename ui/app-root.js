@@ -14,6 +14,8 @@ class AppRoot extends LitElement {
     return {
       loading: { type: Boolean },
       environment: { type: String },
+      region: { type: String },
+      r10ReturnValue: { type: Boolean },
     };
   }
 
@@ -21,6 +23,9 @@ class AppRoot extends LitElement {
     super();
     this.loading = true;
     this.environment = 'eos-moves';
+    this.region = 'us';
+    this.r10ReturnValue = false;
+    this.fileInput = undefined;
   }
 
   async connectedCallback() {
@@ -102,12 +107,65 @@ class AppRoot extends LitElement {
     this.codeModel.notifyVariableUpdated(variable);
   }
 
-  _save() {
-    let a = document.createElement("a");
-    let file = new Blob([this.codeEditor.getValue()], {type: 'text/plain'});
+  _saveCodeToFile() {
+    this._saveStringToFile(this.codeEditor.getValue(), 'code.asm');
+  }
+
+  _saveProjectAsJson() {
+    this._saveStringToFile(this.codeModel.toJson(), 'asmeditor-project.json');
+  }
+
+  _loadProjectFromJson() {
+    if (this.fileInput) {
+      // Stupid workaround since it's impossible to find out if the "cancel" button was clicked
+      document.body.removeChild(this.fileInput);
+      this.fileInput = undefined;
+    }
+
+    this.fileInput = document.createElement('input');
+    this.fileInput.style.display = 'none';
+    this.fileInput.type = 'file';
+    document.body.appendChild(this.fileInput);
+
+    this.fileInput.addEventListener('change', evt => {
+      document.body.removeChild(this.fileInput);
+      this.fileInput = undefined;
+
+      let [file] = evt.target.files;
+      if (!file) {
+        return;
+      }
+
+      let fileReader = new FileReader();
+      fileReader.addEventListener('loadend', event => {
+        try {
+          this.codeModel.fromJson(event.target.result);
+          this.codeModel.validateAllNodes();
+          this.environment = this.codeModel.environmentName;
+          this.region = this.codeModel.region;
+          this.r10ReturnValue = this.codeModel.r10ReturnValue;
+          this._generateCode();
+          this.requestUpdate();
+
+        } catch (e) {
+          alert('An error occured while trying to load the project. '
+            + 'Please report this as an error and add the error message in the console '
+            + '(Open with F12 on Windows)');
+          console.error(e);
+        }
+      });
+      fileReader.readAsText(file);
+    });
+
+    this.fileInput.click();
+  }
+
+  _saveStringToFile(string, fileName) {
+    let a = document.createElement('a');
+    let file = new Blob([string], {type: 'text/plain'});
     let url = URL.createObjectURL(file);
     a.href = url;
-    a.download = 'code.asm';
+    a.download = fileName;
     document.body.appendChild(a);
     a.click();
     setTimeout(() => {
@@ -135,10 +193,11 @@ class AppRoot extends LitElement {
     @inputChange="${(evt) => this._changeVariableValue(evt, variable)}">
 </div>`);
 
-    const r10Select = this.environment === 'eos-moves' ?
-      html`<mwc-formfield label="Set unknown r10 return value to true">
-        <mwc-checkbox @change="${this._r10ReturnChanged}"></mwc-checkbox>
-      </mwc-formfield>` : undefined;
+    const r10Select = this.environment === 'eos-moves'
+     ? html`<mwc-formfield label="Set unknown r10 return value to true">
+  <mwc-checkbox ?checked=${this.r10ReturnValue} @change="${this._r10ReturnChanged}"></mwc-checkbox>
+</mwc-formfield>`
+      : undefined;
 
     return html`
 <block-editor .subgraph=${this.codeModel}></block-editor>
@@ -146,6 +205,12 @@ class AppRoot extends LitElement {
 
   <div class="header">
     <h2>Settings</h2>
+    <div class="header-options">
+      <div class="buttons">
+        <mwc-button outlined icon="save" label="Save Project" @click="${this._saveProjectAsJson}"></mwc-button>
+        <mwc-button outlined icon="upload_file" label="Load Project" @click="${this._loadProjectFromJson}"></mwc-button>
+      </div>
+    </div>
   </div>
   <div class="settings">
     <mwc-select outlined label="Project type" @change="${this._environmentChanged}">
@@ -155,19 +220,23 @@ class AppRoot extends LitElement {
         Item effect</mwc-list-item>
     </mwc-select>
     <mwc-select outlined label="Region" @change="${this._regionChanged}">
-      <mwc-list-item selected value="us">US</mwc-list-item>
-      <mwc-list-item value="eu">EU</mwc-list-item>
+      <mwc-list-item ?selected=${this.region === 'us'} value="us">US</mwc-list-item>
+      <mwc-list-item ?selected=${this.region === 'eu'} value="eu">EU</mwc-list-item>
     </mwc-select>
     ${r10Select}
   </div>
 
   <div class="header">
     <h2>Variables</h2>
+    <div class="header-options">
+      <div class="buttons">
+        <mwc-button raised icon="add" label="Add variable" @click="${this._addVariable}"></mwc-button>
+      </div>
+    </div>
   </div>
 
   <div class="variables">
     ${variables}
-    <mwc-button raised icon="add" label="Add variable" @click="${this._addVariable}"></mwc-button>
   </div>
 
   <div class="header">
@@ -176,7 +245,7 @@ class AppRoot extends LitElement {
       <div class="buttons">
         <mwc-button raised icon="code" label="Generate" @click="${this._generateCode}"></mwc-button>
         <mwc-button outlined icon="content_copy" label="Copy" @click="${this._copyCode}"></mwc-button>
-        <mwc-button outlined icon="save" label="Save" @click="${this._save}"></mwc-button>
+        <mwc-button outlined icon="save" label="Save Code" @click="${this._saveCodeToFile}"></mwc-button>
       </div>
     </div>
   </div>
