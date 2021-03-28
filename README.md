@@ -19,6 +19,7 @@ Currently only supports editing moves, item support will be added soon.
 * Support for string literals and functions that accept strings
 * Item support
 * Saving and loading the graph to/from JSON
+* Reading values from User, Target and MoveData
 
 ## Developer setup
 

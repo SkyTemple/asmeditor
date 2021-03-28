@@ -3,12 +3,13 @@ import { getCodeModel } from './app-root';
 
 import { getNodeTypeName, NODE_MAP } from '../lib/code-model';
 
-const EXCLUDED_NODE_TYPES = ['meta', 'call'];
+const EXCLUDED_NODE_TYPES = ['meta', 'call', 'store'];
 
 class BlockMenu extends LitElement {
   static get properties() {
     return {
       subgraph: { type: Object },
+      variables: { type: Array },
     };
   }
 
@@ -28,6 +29,11 @@ class BlockMenu extends LitElement {
     this.showMenu = false;
 
     this.codeModel = getCodeModel();
+    this.variables = this.codeModel.variables;
+    this.codeModel.onVariablesUpdated.addListener(() => {
+      this.variables = this.codeModel.variables;
+      this.requestUpdate();
+    });
     this.functions = Array.from(this.codeModel.functions.keys());
     this.nodeTypes = Object.keys(NODE_MAP).filter(type => !EXCLUDED_NODE_TYPES.includes(type));
   }
@@ -43,6 +49,11 @@ class BlockMenu extends LitElement {
   _addCallNode(evt) {
     this.codeModel.addCallNode(evt.target.value, this.subgraph);
   }
+
+  _addStoreNode(evt) {
+    console.log(evt.target.value);
+    this.codeModel.addStoreNode(+evt.target.value, this.subgraph);
+  }
   
   render() {
     return html`
@@ -50,6 +61,12 @@ class BlockMenu extends LitElement {
 ${this.nodeTypes.map(item => html`
   <mwc-list-item group="default" @click="${this._addNode}" 
     value=${item}>${getNodeTypeName(item)}</mwc-list-item>`)}
+
+  <li divider role="seperator"></li>
+
+  ${this.variables.map((variable, index) => html`
+    <mwc-list-item group="variables" @click="${this._addStoreNode}" 
+      value=${index}>Set ${variable.name}</mwc-list-item>`)}
 
   <li divider role="seperator"></li>
 

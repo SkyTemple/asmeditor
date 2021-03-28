@@ -100,3 +100,21 @@ Success: bool = RandomChanceUT(User: user, Target: target, Chance: int|percentag
 /// @Success True of the chance passes, false if it doesn't pass or the User fainted.
 /// @Chance Percentage between 0 and 100
 Success: bool = RandomChanceU(User: user, Chance: int|percentage)
+
+// Messages
+
+/// Replaces the string at StringID with the string representation of the Target (aka its name)
+/// Any message with the string manipulator "[string:StringID]" will use that string
+/// @UnkArg2 seems to always be 0
+ChangeString(StringID: int, Target: target, UnkArg2: int)
+
+/// Sends a message to the dungeon console (the one that appears in the lower part of the screen) and in the message log.
+/// @User The User is used to determine if the message is in the same turn as the previous one, in order to separate them with a horizontal bar.
+/// @Log If set to 0, the message will only appear in the message log
+SendMessageWithString(User: user, String: string, Log: bool)
+
+/// Sends a message to the dungeon console (the one that appears in the lower part of the screen) and in the message log.
+/// Uses a string defined in the ".str" file at index MessageID.
+/// @User The User is used to determine if the message is in the same turn as the previous one, in order to separate them with a horizontal bar.
+/// @Log If set to 0, the message will only appear in the message log
+SendMessageWithID(User: user, MessageID: int, Log: bool)

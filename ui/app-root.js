@@ -69,6 +69,28 @@ class AppRoot extends LitElement {
     this._generateCode();
   }
 
+  _addVariable() {
+    this.codeModel.addVariable('New Variable', 'int', 0);
+    this.requestUpdate();
+  }
+
+  _changeVariableName(evt, variable) {
+    variable.name = evt.target.value;
+    this.codeModel.notifyVariableUpdated(variable);
+  }
+
+  _changeVariableValue(evt, variable) {
+    const { type, constantValue } = evt.detail;
+    variable.type = type;
+    variable.defaultValue = constantValue;
+
+    // Handle the case when an int is changed to a bool
+    if (variable.type === 'bool' && variable.defaultValue > 1) {
+      variable.defaultValue = 1;
+    }
+    this.codeModel.notifyVariableUpdated(variable);
+  }
+
   _save() {
     let a = document.createElement("a");
     let file = new Blob([this.codeEditor.getValue()], {type: 'text/plain'});
@@ -91,6 +113,17 @@ class AppRoot extends LitElement {
 </div>
 `;
     }
+
+    let variables = this.codeModel.variables.map(variable => html`
+<div class="variable">
+  <mwc-textfield outlined class="name-text" label="Name"
+    @change=${(evt) => this._changeVariableName(evt, variable)} value="${variable.name}">
+  </mwc-textfield>
+  <generic-input .value=${variable.defaultValue} .kind=${'constant'}
+    .type=${variable.type} .kindSelect=${false} .typeSelect=${true}
+    @inputChange="${(evt) => this._changeVariableValue(evt, variable)}">
+</div>`);
+
     return html`
 <block-editor .subgraph=${this.codeModel}></block-editor>
 <div class="side">
@@ -106,6 +139,15 @@ class AppRoot extends LitElement {
     <mwc-formfield label="Set unknown r10 return value to true">
       <mwc-checkbox @change="${this._r10ReturnChanged}"></mwc-checkbox>
     </mwc-formfield>
+  </div>
+
+  <div class="header">
+    <h2>Variables</h2>
+  </div>
+
+  <div class="variables">
+    ${variables}
+    <mwc-button raised icon="add" label="Add variable" @click="${this._addVariable}"></mwc-button>
   </div>
 
   <div class="header">

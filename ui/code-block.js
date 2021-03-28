@@ -139,6 +139,7 @@ class CodeBlock extends LitElement {
   connectedCallback() {
     super.connectedCallback();
     this.node.onValidated.addListener(this._nodeValidated.bind(this));
+    this.codeModel.onVariablesUpdated.addListener(this._variableUpdated.bind(this));
 
     this.codeModel.validateNode(this.node);
   }
@@ -146,6 +147,7 @@ class CodeBlock extends LitElement {
   disconnectedCallback() {
     super.disconnectedCallback();
     this.node.onValidated.removeAllListeners();
+    this.codeModel.onVariablesUpdated.removeListener(this._variableUpdated.bind(this));
   }
 
   updated(changedProperties) {
@@ -176,6 +178,18 @@ class CodeBlock extends LitElement {
     }
   }
 
+  _variableUpdated({ variable, index }) {
+    if (this.node.type === 'store' && this.node.data.variableRef === index) {
+      // Update the "store" node if a variable was changed
+      // TODO: this is ugly and should be handled somewhere else
+      this.node.data.description = `Set "${variable.name}"`;
+      this.node.data.inputs[0].type = variable.type;
+    }
+
+    this.codeModel.validateNode(this.node);
+    this.requestUpdate();
+  }
+
   _dragStart(ev) {
     if (this._isMeta) {
       ev.preventDefault();
@@ -200,9 +214,10 @@ class CodeBlock extends LitElement {
 
   _renderInputField(input, type = undefined) {
     type = type ?? input.type;
+    let variableNames = this.codeModel.variables.map(variable => variable.name);
     return html`
 <generic-input .value=${input.value.constantValue} .kind=${input.value.kind}
-  .type=${type} .annotation=${input.annotation}
+  .type=${type} .annotation=${input.annotation} .variableNames=${variableNames}
   @inputChange="${evt => this._inputChange(evt, input)}">
 </generic-input>`;
   }
@@ -242,6 +257,12 @@ class CodeBlock extends LitElement {
       let prevOutputs = this.node.prev.data.outputs;
       if (prevOutputs && prevOutputs.length) {
         type = this.node.prev.data.outputs[0].type;
+      }
+    }
+    if (nodeInputs[0].value.kind === 'variable-ref' || nodeInputs[1].value.kind === 'variable-ref') {
+      let variableIndex = nodeInputs[0].value.constantValue;
+      if (variableIndex < this.codeModel.variables.length) {
+        type = this.codeModel.variables[variableIndex].type;
       }
     }
 

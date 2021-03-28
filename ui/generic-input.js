@@ -9,6 +9,11 @@ const KIND_DESCRIPTIONS = {
   'last-result': 'Result of last operation',
 };
 
+const VARIABLE_TYPES = [
+  'int',
+  'bool'
+]
+
 class GenericInput extends LitElement {
   static get properties() {
     return {
@@ -17,6 +22,10 @@ class GenericInput extends LitElement {
       type: { type: String },
       annotation: { type: String },
       allowedKinds: { type: Array },
+      variableNames: { type: Array },
+
+      kindSelect: { type: Boolean },
+      typeSelect: { type: Boolean },
     };
   }
 
@@ -30,6 +39,10 @@ class GenericInput extends LitElement {
 .kind-select {
   width: 250px;
 }
+
+.type-select {
+  width: 100px;
+}
 `;
   }
 
@@ -37,6 +50,8 @@ class GenericInput extends LitElement {
     super();
     this.allowedKinds = Object.keys(KIND_DESCRIPTIONS);
     this.value = 0;
+    this.kindSelect = true;
+    this.variableNames = [];
   }
 
   connectedCallback() {
@@ -49,27 +64,61 @@ class GenericInput extends LitElement {
     this.dispatchEvent(new CustomEvent('inputChange', {
       detail: {
         kind: this.kind,
-        constantValue: this.value
+        constantValue: this.value,
+        type: this.type,
       }
     }));
   }
 
   _valueChanged(evt) {
-    this.value = evt.target.value || Number(evt.target.checked);
+    this.value = +evt.target.value || Number(evt.target.checked);
     this._dispatchChangeEvent();
   }
 
   _kindChanged(evt) {
-    this.kind = evt.target.value;
+    let kind = evt.target.value;
+    if (kind.startsWith('var-')) {
+      this.kind = 'variable-ref';
+      this.value = +kind.substr('var-'.length); // Extract variable index from "var-[index]"
+    } else {
+      this.kind = kind;
+    }
+    this._dispatchChangeEvent();
+  }
+
+  _typeChanged(evt) {
+    this.type = evt.target.value;
     this._dispatchChangeEvent();
   }
   
   render() {
-    let options = this.allowedKinds.map(kind => html`
+    let kindOptions = this.allowedKinds.map(kind => html`
       <mwc-list-item ?selected="${kind === this.kind}" @change=${this._kindChanged} value="${kind}">
         ${KIND_DESCRIPTIONS[kind]}
       </mwc-list-item>
     `);
+    let variableOptions = this.variableNames.map((varName, index) => html`
+      <mwc-list-item ?selected="${this.kind === 'variable-ref' && index === this.value}" value="var-${index}">
+        ${varName}</mwc-list-item>
+    `);
+
+    let kindAndVariablesField = this.kindSelect
+      ? html`<mwc-select outlined @change="${this._kindChanged}" class="kind-select">
+        ${kindOptions}
+        <li divider role="seperator"></li>
+        ${variableOptions}
+      </mwc-select>`
+      : undefined;
+
+    let typeOptions = VARIABLE_TYPES.map(type => html`
+      <mwc-list-item ?selected="${type === this.type}" @change=${this._typeChanged} value="${type}">
+        ${type}
+      </mwc-list-item>
+    `);
+
+    let typeField = this.typeSelect
+      ? html`<mwc-select outlined label="Type" @change="${this._typeChanged}" class="type-select">${typeOptions}</mwc-select>`
+      : undefined;
 
     let valueField;
     if (this.kind === 'constant') {
@@ -86,8 +135,9 @@ class GenericInput extends LitElement {
     }
 
     return html`
-<mwc-select outlined @change="${this._kindChanged}" class="kind-select">${options}</mwc-select>
-${valueField}
+      ${kindAndVariablesField}
+      ${typeField}
+      ${valueField}
     `;
   }
 }
