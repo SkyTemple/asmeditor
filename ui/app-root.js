@@ -11,12 +11,16 @@ import './block-editor';
 
 class AppRoot extends LitElement {
   static get properties() {
-    return { loading: { type: Boolean } };
+    return {
+      loading: { type: Boolean },
+      environment: { type: String },
+    };
   }
 
   constructor() {
     super();
     this.loading = true;
+    this.environment = 'eos-moves';
   }
 
   async connectedCallback() {
@@ -52,7 +56,7 @@ class AppRoot extends LitElement {
   }
 
   _generateCode() {
-    this.codeEditor.setValue(this.codeModel.generateCode());
+    this.codeEditor?.setValue(this.codeModel.generateCode());
   }
 
   _copyCode() {
@@ -61,6 +65,13 @@ class AppRoot extends LitElement {
 
   _regionChanged(evt) {
     this.codeModel.region = evt.target.value;
+    this._generateCode();
+  }
+
+  _environmentChanged(evt) {
+    this.environment = evt.target.value;
+    this.codeModel.setEnvironment(this.environment);
+    this.codeModel.validateAllNodes();
     this._generateCode();
   }
 
@@ -124,6 +135,11 @@ class AppRoot extends LitElement {
     @inputChange="${(evt) => this._changeVariableValue(evt, variable)}">
 </div>`);
 
+    const r10Select = this.environment === 'eos-moves' ?
+      html`<mwc-formfield label="Set unknown r10 return value to true">
+        <mwc-checkbox @change="${this._r10ReturnChanged}"></mwc-checkbox>
+      </mwc-formfield>` : undefined;
+
     return html`
 <block-editor .subgraph=${this.codeModel}></block-editor>
 <div class="side">
@@ -132,13 +148,17 @@ class AppRoot extends LitElement {
     <h2>Settings</h2>
   </div>
   <div class="settings">
+    <mwc-select outlined label="Project type" @change="${this._environmentChanged}">
+      <mwc-list-item ?selected=${this.environment === 'eos-moves'} value="eos-moves">
+        Move effect</mwc-list-item>
+      <mwc-list-item ?selected=${this.environment === 'eos-items'} value="eos-items">
+        Item effect</mwc-list-item>
+    </mwc-select>
     <mwc-select outlined label="Region" @change="${this._regionChanged}">
       <mwc-list-item selected value="us">US</mwc-list-item>
       <mwc-list-item value="eu">EU</mwc-list-item>
     </mwc-select>
-    <mwc-formfield label="Set unknown r10 return value to true">
-      <mwc-checkbox @change="${this._r10ReturnChanged}"></mwc-checkbox>
-    </mwc-formfield>
+    ${r10Select}
   </div>
 
   <div class="header">

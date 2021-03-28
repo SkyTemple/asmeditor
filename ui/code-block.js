@@ -326,6 +326,9 @@ ${inputs ?
 ${outputs
   ? html`<h3>Outputs</h3><div class="outputs">${outputs}</div>`
   : ''}
+<ul class="errors">
+  ${this.validationErrors.filter(err => !err.input).map(err => err.text)}
+</ul>
 `;
   }
   

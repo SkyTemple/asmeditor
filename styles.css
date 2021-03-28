@@ -29,6 +29,7 @@ app-root {
   right: 0;
   bottom: 0;
   flex-direction: column;
+  width: 500px;
 }
 
 .header, .footer {
@@ -86,15 +87,8 @@ app-root {
 }
 
 .settings mwc-select {
-  margin: 12px 8px 0 8px;
-}
-
-.settings mwc-select {
   width: calc(100% - 16px);
-}
-
-.settings > * {
-  width: 100%;
+  margin: 12px 8px 0 8px;
 }
 
 .variables {

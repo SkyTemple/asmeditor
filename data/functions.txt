@@ -22,11 +22,10 @@ ConstDamage(Target: target, Damage: int, UnkArg2: int, UnkArg3: int, MoveId: int
 
 // Complex effects
 
-DamageWithRecoil(User: user, Target: target, MoveData: moveData, UnkArg3: int)
+DamageWithRecoil(User: user, Target: target, MoveData: moveData, ItemId: int)
 
 /// @DamageMultiplier 0x100 is the normal multiplier
-DamageDealt: int = DealDamage(User: user, Target: target, MoveData: moveData, DamageMultiplier: int|multiplier = 0x100, UnkArg4: int)
-
+DamageDealt: int = DealDamage(User: user, Target: target, MoveData: moveData, DamageMultiplier: int|multiplier = 0x100, ItemId: int)
 
 // Heal
 
@@ -35,6 +34,10 @@ HealAllMovesPP(User: user, Target: target, PPHeal: int, NoMessage: bool)
 Success: bool = RaiseHP(User: user, Target: target, HPHeal: int, MaxHpRaise: int, FailMessage: bool)
 
 // Status effects
+
+/// Gets the current weather for the selected target.
+/// Applies target's effects that neutralize weather conditions.
+WeatherID: int = GetWeather(Target: target)
 
 /// Don't use this, use Sleep instead.
 SleepSingle(Target: target, NbTurns: int)
