@@ -1,7 +1,7 @@
 # EOS Code Editor
 
 Graphical editor for generating isolated pieces of Assembly code for PMD: Explorers of Sky.
-Currently only supports editing moves, item support will be added soon.
+Currently supports editing moves and items.
 
 ## Features
 
