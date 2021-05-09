@@ -102,9 +102,12 @@ app-root {
 }
 
 .variables .variable {
-  display: flex;
   gap: 8px;
   width: 480px;
+}
+
+.variables .variable-inner {
+  display: flex;
 }
 
 .variables .name-text {
@@ -121,4 +124,13 @@ block-editor {
   width: calc(100% - 500px - 32px);
   padding: 16px;
   max-width: 900px;
+}
+
+.errors {
+  margin: 0;
+  padding: 0;
+  padding-bottom: 1rem;
+  vertical-align: text-top;
+  font-size: 0.8rem;
+  color: red;
 }

@@ -105,6 +105,8 @@ class AppRoot extends LitElement {
       variable.defaultValue = 1;
     }
     this.codeModel.notifyVariableUpdated(variable);
+
+    this.requestUpdate();
   }
 
   _saveCodeToFile() {
@@ -185,12 +187,18 @@ class AppRoot extends LitElement {
 
     let variables = this.codeModel.variables.map(variable => html`
 <div class="variable">
-  <mwc-textfield outlined class="name-text" label="Name"
-    @change=${(evt) => this._changeVariableName(evt, variable)} value="${variable.name}">
-  </mwc-textfield>
-  <generic-input .value=${variable.defaultValue} .kind=${'constant'}
-    .type=${variable.type} .kindSelect=${false} .typeSelect=${true}
-    @inputChange="${(evt) => this._changeVariableValue(evt, variable)}">
+  <div class="variable-inner">
+    <mwc-textfield outlined class="name-text" label="Name"
+      @change=${(evt) => this._changeVariableName(evt, variable)} value="${variable.name}">
+    </mwc-textfield>
+    <generic-input .value=${variable.defaultValue} .kind=${'constant'}
+      .type=${variable.type} .kindSelect=${false} .typeSelect=${true}
+      @inputChange="${(evt) => this._changeVariableValue(evt, variable)}">
+    </generic-input>
+  </div>
+  ${variable.validationError ? html`<div class="errors">
+    ${variable.validationError}
+  </div>` : ''}
 </div>`);
 
     const r10Select = this.environment === 'eos-moves'
