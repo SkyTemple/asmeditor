@@ -4,6 +4,23 @@ body {
   font-family: 'Roboto', sans-serif;
 }
 
+.deprecation-notice {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  background-color: red;
+  color: white;
+  padding: 16px;
+  text-align: center;
+  border-bottom: 1px solid #555;
+  z-index: 999;
+}
+
+.deprecation-notice a, .deprecation-notice a:link .deprecation-notice a:visited {
+  color: white;
+}
+
 app-root {
   position: absolute;
   width: 100%;
@@ -25,7 +42,7 @@ app-root {
   border-left: 1px solid #aaa;
   display: flex;
   position: fixed;
-  top: 0;
+  top: 70px;
   right: 0;
   bottom: 0;
   flex-direction: column;
@@ -123,6 +140,7 @@ app-root {
 block-editor {
   width: calc(100% - 500px - 32px);
   padding: 16px;
+  margin-top: 70px;
   max-width: 900px;
 }
 

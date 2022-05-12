@@ -208,6 +208,10 @@ class AppRoot extends LitElement {
       : undefined;
 
     return html`
+<div class="deprecation-notice">
+    asmeditor is deprecated and won't get any updates.
+    <a href="https://github.com/tech-ticks/c-of-time">Writing patches in C or Rust<br>with c-of-time instead is highly recommended for a better development experience.</a>
+</div>
 <block-editor .subgraph=${this.codeModel}></block-editor>
 <div class="side">
 
